@@ -1611,25 +1611,19 @@ func (m *Model) diskChangeDetected(folderCfg config.FolderConfiguration, files [
 		// for windows paths, strip unwanted chars from the front.
 		path := filepath.Join(path, filepath.FromSlash(file.Name))
 
+		typeOfEvent := events.RemoteChangeDetected
 		if localChange {
-			events.Default.Log(events.LocalChangeDetected, map[string]string{
-				"folderID":   folderCfg.ID,
-				"label":      folderCfg.Label,
-				"action":     action,
-				"type":       objType,
-				"path":       path,
-				"modifiedBy": file.ModifiedBy.String(),
-			})
-		} else {
-			events.Default.Log(events.RemoteChangeDetected, map[string]string{
-				"folderID":   folderCfg.ID,
-				"label":      folderCfg.Label,
-				"action":     action,
-				"type":       objType,
-				"path":       path,
-				"modifiedBy": file.ModifiedBy.String(),
-			})
+			typeOfEvent = events.LocalChangeDetected
 		}
+
+		events.Default.Log(typeOfEvent, map[string]string{
+			"folderID":   folderCfg.ID,
+			"label":      folderCfg.Label,
+			"action":     action,
+			"type":       objType,
+			"path":       path,
+			"modifiedBy": file.ModifiedBy.String(),
+		})
 	}
 }
 
